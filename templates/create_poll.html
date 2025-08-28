@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}SmartVote - Create Poll{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Create a New Poll</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="question" class="form-label">Poll Question</label>
+                            <input type="text" class="form-control" id="question" name="question" required 
+                                   placeholder="Enter your question here">
+                        </div>
+                        <div class="mb-3">
+                            <label for="options" class="form-label">Options (separated by commas)</label>
+                            <textarea class="form-control" id="options" name="options" rows="3" required 
+                                      placeholder="Option 1, Option 2, Option 3"></textarea>
+                            <div class="form-text">Enter each option separated by a comma. At least 2 options are required.</div>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Poll</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

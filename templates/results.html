@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}SmartVote - Results{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">{{ poll.question }}</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Vote Results</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for option, count in poll.options.items() %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ option }}
+                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Results Chart</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="resultsChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add this to your results.html file -->
+<div class="text-center mt-4">
+    <a href="/voter_details/{{ poll_id }}" class="btn btn-info me-2">
+        <i class="fas fa-users me-1"></i> View Detailed Voter Information
+    </a>
+    <a href="/" class="btn btn-primary">Back to Home</a>
+</div>
+    
+    
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('resultsChart').getContext('2d');
+        
+        // Prepare data for the chart
+        var labels = [];
+        var data = [];
+        
+        // Get all list items with vote data
+        var voteItems = document.querySelectorAll('.list-group-item');
+        voteItems.forEach(function(item) {
+            var optionText = item.textContent.split('\n')[0].trim();
+            var voteCount = parseInt(item.querySelector('.badge').textContent);
+            
+            labels.push(optionText);
+            data.push(voteCount);
+        });
+        
+        // Create the chart
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Votes',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

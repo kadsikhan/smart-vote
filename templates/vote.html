@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}SmartVote - Vote{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">{{ poll.question }}</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% for option in poll.options %}
+                        <div class="form-check mb-3 poll-option p-3 rounded">
+                            <input class="form-check-input" type="radio" name="option" 
+                                   id="option{{ loop.index }}" value="{{ option }}">
+                            <label class="form-check-label fs-5" for="option{{ loop.index }}">
+                                {{ option }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="/" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Submit Vote</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

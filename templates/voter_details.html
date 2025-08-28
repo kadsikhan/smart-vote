@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}SmartVote - Voter Details{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Voter Details - {{ poll.question }}</h1>
+    
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <h2 class="card-title">{{ votes|length }}</h2>
+                    <p class="card-text">Total Votes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-info text-white">
+                <div class="card-body">
+                    {% set female_votes = votes.values()|selectattr('user_info.gender', 'equalto', 'Female')|list|length %}
+                    <h2 class="card-title">{{ female_votes }}</h2>
+                    <p class="card-text">Female Voters</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    {% set male_votes = votes.values()|selectattr('user_info.gender', 'equalto', 'Male')|list|length %}
+                    <h2 class="card-title">{{ male_votes }}</h2>
+                    <p class="card-text">Male Voters</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center bg-warning text-dark">
+                <div class="card-body">
+                    {% set other_votes = votes.values()|selectattr('user_info.gender', 'equalto', 'Other')|list|length %}
+                    <h2 class="card-title">{{ other_votes }}</h2>
+                    <p class="card-text">Other Voters</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Option-wise Statistics -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-0">Votes by Candidate</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for option, count in poll.options.items() %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ option }}</h5>
+                            <h3 class="text-primary">{{ count }} votes</h3>
+                            {% set option_voters = votes.values()|selectattr('option', 'equalto', option)|list %}
+                            <p class="text-muted">
+                                {% set female_count = option_voters|selectattr('user_info.gender', 'equalto', 'Female')|list|length %}
+                                {% set male_count = option_voters|selectattr('user_info.gender', 'equalto', 'Male')|list|length %}
+                                {{ female_count }} Female, {{ male_count }} Male
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Detailed Voter Information -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0">Detailed Voter Information</h3>
+            <span class="badge bg-primary">{{ votes|length }} voters</span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>City</th>
+                            <th>Voted For</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for email, vote in votes.items() %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ vote.user_info.name }}</td>
+                            <td>{{ vote.user_info.age }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if vote.user_info.gender == 'Female' %}bg-info
+                                    {% elif vote.user_info.gender == 'Male' %}bg-success
+                                    {% else %}bg-warning text-dark{% endif %}">
+                                    {{ vote.user_info.gender }}
+                                </span>
+                            </td>
+                            <td>{{ vote.user_info.city }}</td>
+                            <td>
+                                <span class="badge bg-primary">{{ vote.option }}</span>
+                            </td>
+                            <td>{{ vote.voted_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if votes|length == 0 %}
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No votes yet</h4>
+                <p class="text-muted">No one has voted in this poll yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="/results/{{ poll_id }}" class="btn btn-primary me-2">
+            <i class="fas fa-chart-bar me-1"></i> Back to Results
+        </a>
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-home me-1"></i> Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
